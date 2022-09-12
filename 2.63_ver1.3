@@ -1,0 +1,59 @@
+#include<stdio.h>
+#include<math.h>
+
+unsigned srl(unsigned x, int k)
+{
+	/*Perform shift arithmetically*/
+	unsigned xsra=(int)x>>k;
+	
+	/*因无法使用右移或除法，故用乘法在循环中遍历代替*/ 
+	int w=8*sizeof(int);/*确定int型位数*/ 
+	int backbits=w-k;
+	int tmp=x<<(backbits);/*为保留x的低k位，进行左移*/ 
+	unsigned int back=0;
+	for(;;back++)/*遍历找到x的低k位*/ 
+	{
+		if(back<<backbits==tmp)
+		break;
+	}
+	
+	unsigned int front=0;
+	for(;;front++)/*遍历找到x的高w-k位*/ 
+	{
+		if((front<<k)+back==x)
+		break;
+	}
+	
+	return xsra&front;
+}
+
+int sra(int x, int k)
+{
+	/*Perform shift logically*/
+	int xsrl=(unsigned)x>>k;
+	
+	if(x>=0)
+	return xsrl;
+	
+	else
+	{
+		int w=8*sizeof(int);
+		unsigned int nega=pow(2,k)-1;/*算术右移前面应有k位1*/
+		unsigned int Turenega=nega<<(w-k);
+		return (int)(xsrl|Turenega); 
+	}
+}
+
+int main()
+{
+	/*以下为测试*/ 
+	int a=srl(31,2);
+	printf("%d\n",a);
+	printf("%d\n",8*sizeof(int));
+	unsigned int b=pow(2,31)+8;
+	printf("%u\n",b);
+	printf("%d\n",b);
+	int c=(int)b;
+	int d=sra(c,2);
+	printf("%d\n",d);
+}
