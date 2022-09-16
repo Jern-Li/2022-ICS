@@ -1,0 +1,32 @@
+#include<stdio.h>
+int main()
+{
+	signed int x;
+	signed int result;
+	char option;
+	printf("请输入整数变量x： ");
+	scanf("%d",&x);
+	printf("A.K=17\nB.K=-7\nC.K=60\nD.K=-112\n");
+	printf("请选择目标K值（输入选项号）： ");
+	scanf("%c",&option);
+	switch(option)
+	{
+		case 'A':
+			result=(x<<4)+x;
+			printf("K=17,执行的运算是(x<<4)+x，结果是%d",result);
+			break;
+		case 'B':
+			result=x-(x<<3);
+			printf("K=-7,执行的运算是x-(x<<3)，结果是%d",result);
+		    break;
+		case 'C':
+			result=(x<<6)-(x<<2);
+			printf("K=60,执行的运算是(x<<6)-(x<<2)，结果是%d",result);
+			break;
+		case 'D':
+			result=(x<<4)-(x<<7);
+			printf("K=-112,执行的运算是(x<<4)-(x<<7)，结果是%d",result);
+			break;
+	}
+	
+}
