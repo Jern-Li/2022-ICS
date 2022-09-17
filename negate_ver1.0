@@ -1,0 +1,10 @@
+ * negate - return -x 
+ *   Example: negate(1) = -1.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 5
+ *   Rating: 2
+ */
+int negate(int x) {
+    /* exploit the formula of -x=~x+1 */
+    return ~x+1;
+}
