@@ -1,0 +1,6 @@
+int bitXor(int x, int y) {
+    /*exploit ability of  & and ~ to compute x^y */
+    int result; 
+    result=(~(x&y))&(~((~x)&(~y)));
+    return result;
+}
