@@ -1,0 +1,15 @@
+ * allOddBits - return 1 if all odd-numbered bits in word set to 1
+ *   where bits are numbered from 0 (least significant) to 31 (most significant)
+ *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 12
+ *   Rating: 2
+ */
+int allOddBits(int x) {
+    /*create a number(0 to 31) that has all its odd-numbered bits set to 1, and even-numbered bits set to 0,
+    *then exploit the ability of &*/
+    int oddNumber;
+    oddNumber=0xAA+(0xAA<<8)+(0xAA<<16)+(0xAA<<24);
+    return !((x&oddNumber)^oddNumber);
+    
+}
