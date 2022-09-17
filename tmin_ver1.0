@@ -1,0 +1,5 @@
+int tmin(void) {
+    /*The minimum 2's complement integer in 32-bit machine is 1000..000(binary,32 bits in total)
+    *exploit the ability of shift on constant 1 to achieve this goal*/
+    return 1<<31;
+}
