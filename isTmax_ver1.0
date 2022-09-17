@@ -1,0 +1,12 @@
+ * isTmax - returns 1 if x is the maximum, two's complement number,
+ *     and 0 otherwise 
+ *   Legal ops: ! ~ & ^ | +
+ *   Max ops: 10
+ *   Rating: 1
+ */
+int isTmax(int x) {
+     /*exploit the ability of shifts and ~ to obtain the maximum number, then fulfill the requirements*/
+     int max;
+     max=~(1<<31);
+     return (x==max);
+}
