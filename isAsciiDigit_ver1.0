@@ -1,0 +1,8 @@
+int isAsciiDigit(int x) {
+    /* in 0x30 and 0x39, only the last 4 bits are different, exploit this discrepancy to compute
+    * and subtraction will be achieve by +(~x+1) 
+    * compare bit4 to bit7 with 0x30 first, then make sure 0x09 - x's last four bits are still positive*/ 
+    int result=(!((0x30>>4)^(x>>4)))&(((0x09+(~x+1))^(1<<31))>>31);
+    return result;
+    
+}
