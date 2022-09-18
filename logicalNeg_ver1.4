@@ -1,0 +1,15 @@
+/* 
+ * logicalNeg - implement the ! operator, using all of 
+ *              the legal operators except !
+ *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
+ *   Legal ops: ~ & ^ | + << >>
+ *   Max ops: 12
+ *   Rating: 4 
+ */
+int logicalNeg(int x) {
+     /* only 0x0 ^ 0x01 will be 0x01, and only 0x80000000, 0x0 have the trait of x=~x+1*/
+     int judge,result;
+     judge=(x|~x+1)>>31+1; /* judge whether x=~x+1(except 0x80000000*/
+     result=(x^0x01)&0x01&judge;
+     return result;
+}
