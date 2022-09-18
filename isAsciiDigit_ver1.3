@@ -1,0 +1,17 @@
+ * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
+ *   Example: isAsciiDigit(0x35) = 1.
+ *            isAsciiDigit(0x3a) = 0.
+ *            isAsciiDigit(0x05) = 0.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 15
+ *   Rating: 3
+ */
+int isAsciiDigit(int x) {
+    /* and subtraction will be achieve by +(~x+1) 
+    * compare bit4 to bit7 with 0x30 first, then make sure 0x39 - x are still positive*/ 
+    int former,later;
+    former=(!(0x03^(x>>4)));
+    later=(!((0x39+(~x+1))>>31));
+    return former&later;
+   
+}
