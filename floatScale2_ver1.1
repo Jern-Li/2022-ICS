@@ -1,0 +1,25 @@
+ * floatScale2 - Return bit-level equivalent of expression 2*f for
+ *   floating point argument f.
+ *   Both the argument and result are passed as unsigned int's, but
+ *   they are to be interpreted as the bit-level representation of
+ *   single-precision floating point values.
+ *   When argument is NaN, return argument
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+unsigned floatScale2(unsigned uf) {
+    /* in 32-bit machine, float number has one bit for sign zone, 8 bits for exp zone, 23 bits for frac zone 
+    *to implement *2, we could use <<1 */
+    unsigned int sign;
+    sign=(x>>31)&0x01;
+    if((uf>>23)&0xff==0xff||uf==0x00||(uf>>23)&(0x01<<7)==0x01<<7) 
+    /* when argument is NaN(actually also positive and negative infinity, but 2*infinity is still infinity itself), exp zone are all 1 bits 
+    *when uf is 0, and when *2 uf will jump to NaN and infinity */
+    return uf; 
+    
+    if((uf>>23)&0xff==0x00) /* when exp zone are all 0 bits */
+    return sign<<31+uf<<1  /* in this situation, E is always 1-Bias, so we couldn't *2 by simply adding 1 to exp zone */
+    
+    return uf+0x01<<23; /* add 1 to exp zone to implement *2 */
+}
