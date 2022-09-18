@@ -1,0 +1,12 @@
+ * isLessOrEqual - if x <= y  then return 1, else return 0 
+ *   Example: isLessOrEqual(4,5) = 1.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 24
+ *   Rating: 3
+ */
+int isLessOrEqual(int x, int y) {
+     /* Take subtraction +(~x+1) to compare the two numbers*/
+     int result;
+     result= (y+(~x+1))>>31;
+     return !result;  
+}
