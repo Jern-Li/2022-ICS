@@ -1,0 +1,42 @@
+ * floatFloat2Int - Return bit-level equivalent of expression (int) f
+ *   for floating point argument f.
+ *   Argument is passed as unsigned int, but
+ *   it is to be interpreted as the bit-level representation of a
+ *   single-precision floating point value.
+ *   Anything out of range (including NaN and infinity) should return
+ *   0x80000000u.
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+int floatFloat2Int(unsigned uf) {
+    /* calculate the sign zone,exp zone, and the frac zone */
+    int special,exp,sign,frac,result; 
+    /* attention: for unsigned int, shifts will only be logical shifts */
+    special=0x8<<28;
+    exp=uf<<1>>24;
+    sign=uf>>31;
+    frac=uf<<9>>9;
+    if(!((exp&0xff)^0xff)) /* NaN and infinity */
+    return special;
+    
+    else if(!((exp|0x00)<<23))  /* exp zone are all 0 */
+    return sign<<31>>31; /* for numbers close to 0, result will be 0 if number is positive, and -1 if negative */
+    
+    else  if(!((127+(~uf+1))>>31&0x01))/* below are common situations */
+    {
+        result=(frac>>23+1)<<(exp-127);
+        if(!sign)
+        return result;
+        else
+        return ~result+1;
+    }
+    else 
+    {
+       result=(frac>>23+1)<<(127-exp);
+        if(!sign)
+        return result;
+        else
+        return ~result+1;
+    }
+}
