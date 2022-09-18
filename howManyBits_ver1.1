@@ -1,0 +1,42 @@
+* howManyBits - return the minimum number of bits required to represent x in
+ *             two's complement
+ *  Examples: howManyBits(12) = 5
+ *            howManyBits(298) = 10
+ *            howManyBits(-5) = 4
+ *            howManyBits(0)  = 1
+ *            howManyBits(-1) = 1
+ *            howManyBits(0x80000000) = 32
+ *  Legal ops: ! ~ & ^ | + << >>
+ *  Max ops: 90
+ *  Rating: 4
+ */
+int howManyBits(int x) {
+     /* try to find the highest bit that is 1, and for non-negative number, the extra sign bit should be counted */
+     int judge,count;
+     x=x^(x>>31); /*when x is nega, make x=~x, so then for non-nega and nega, the final result must +1*/
+     count=0;
+    
+     /* the initial guess is to enumerate and try to shift every bit, but this solution is too silly, it might could be simplified */
+     
+     judge=!!(x>>16); /* judge whether the high 16 bits have bit=1 */
+     count=judge<<4; /* multiply by 16, the formulas below also have this similar reason*/
+     x=(x>>16)&(judge<<31>>31);
+     
+     judge=!!(x>>8);
+     count=count+judge<<3;
+     x=(x>>8)&(judge<<31>>31);
+     
+     judge=!!(x>>4);
+     count=count+judge<<2;
+     x=(x>>4)&(judge<<31>>31);
+     
+     judge=!!(x>>2);
+     count=count+judge<<2;
+     x=(x>>2&(judge<<31>>31);
+     
+     judge=!!!(x>>1);
+     count=count+judge<<1;
+     x=(x>>1)&(judge<<31>>31);
+     
+     return count+1;
+}
