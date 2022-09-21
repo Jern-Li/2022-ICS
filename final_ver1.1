@@ -1,0 +1,283 @@
+//1
+/* 
+ * bitXor - x^y using only ~ and & 
+ *   Example: bitXor(4, 5) = 1
+ *   Legal ops: ~ &
+ *   Max ops: 14
+ *   Rating: 1
+ */
+int bitXor(int x, int y) {
+    /*exploit ability of  & and ~ to compute x^y */
+    int result; 
+    result=(~(x&y))&(~((~x)&(~y))); /*The formula was initially a guess(by testing some pairs of numbers), and turned out to be the right answer*/ 
+    return result;
+}
+/* 
+ * tmin - return minimum two's complement integer 
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 4
+ *   Rating: 1
+ */
+int tmin(void) {
+    /*The minimum 2's complement integer in 32-bit machine is 1000..000(binary,32 bits in total)
+    *exploit the ability of shift on constant 1 to achieve this goal*/
+    return 1<<31;
+}
+//2
+/*
+ * isTmax - returns 1 if x is the maximum, two's complement number,
+ *     and 0 otherwise 
+ *   Legal ops: ! ~ & ^ | +
+ *   Max ops: 10
+ *   Rating: 1
+ */
+int isTmax(int x) {
+     /*max is 01111...111(32bits), ~x and x+1 will be the same(need to exclude 1111...1111(32bits) */
+     return (!((~x)^(x+1)))&(!!(~x));
+ 
+}
+/* 
+ * allOddBits - return 1 if all odd-numbered bits in word set to 1
+ *   where bits are numbered from 0 (least significant) to 31 (most significant)
+ *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 12
+ *   Rating: 2
+ */
+int allOddBits(int x) {
+    /*create a number(0 to 31 bits) that has all its odd-numbered bits set to 1, and even-numbered bits set to 0,
+    *then exploit the ability of &,^,! */
+    int oddNumber;
+    oddNumber=0xAA+(0xAA<<8)+(0xAA<<16)+(0xAA<<24);
+    return !((x&oddNumber)^oddNumber);
+    
+}
+/* 
+ * negate - return -x 
+ *   Example: negate(1) = -1.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 5
+ *   Rating: 2
+ */
+int negate(int x) {
+    /* exploit the formula of -x=~x+1 */
+    return ~x+1;
+}
+//3
+/* 
+ * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
+ *   Example: isAsciiDigit(0x35) = 1.
+ *            isAsciiDigit(0x3a) = 0.
+ *            isAsciiDigit(0x05) = 0.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 15
+ *   Rating: 3
+ */
+int isAsciiDigit(int x) {
+    /* and subtraction will be achieve by +(~x+1) 
+    * compare bit4 to bit7 with 0x30 first, then make sure 0x39 - x are still positive*/ 
+    int former,later;
+    former=!(0x03^(x>>4));
+    later=!((0x39+(~x+1))>>31);
+    return former&later;
+   
+}
+/* 
+ * conditional - same as x ? y : z 
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+    /*exploit the ability of &,!,<<,>> to implement the function, and use | to compute like if*/
+    int option1,option2;
+    option1=(((!x)+0x1)<<31)>>31&y;
+    option2=((!x)<<31)>>31&z;
+    return option1|option2;
+}
+/* 
+ * isLessOrEqual - if x <= y  then return 1, else return 0 
+ *   Example: isLessOrEqual(4,5) = 1.
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 24
+ *   Rating: 3
+ */
+int isLessOrEqual(int x, int y) {
+     /* Take subtraction +(~x+1) to compare the two numbers*/
+     int doubleNega,doublePosi,NegaPosi,sign_x,sign_y,judge,min;
+     sign_x=x>>31;
+     sign_y=y>>31;
+     judge=(y+(~x+1))>>31;
+     min=0x01<<31;
+     doublePosi= (!sign_x)&(!sign_y)&(!judge);
+     doubleNega=(sign_x)&(sign_y&0x01)&((!judge)|(!(x^min)));  /*special situation: x==100.000(32bits) */
+     NegaPosi=(sign_x)&(!sign_y);
+     return doublePosi|doubleNega|NegaPosi;  
+}
+//4
+/* 
+ * logicalNeg - implement the ! operator, using all of 
+ *              the legal operators except !
+ *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
+ *   Legal ops: ~ & ^ | + << >>
+ *   Max ops: 12
+ *   Rating: 4 
+ */
+int logicalNeg(int x) {
+     /* only 0x0 ^ 0x01 will be 0x01, and only 0x80000000, 0x0 have the trait of x=~x+1*/
+     int judge,result;
+     judge=((x|(~x+1))>>31); /* judge whether x=~x+1(except 0x80000000)*/
+     result=(x^0x01)&0x01&(~judge);  /* ~jugde will be 1111...1111 if it's 0, and 00...0000 if it's other numbers */
+     return result;
+}
+/* howManyBits - return the minimum number of bits required to represent x in
+ *             two's complement
+ *  Examples: howManyBits(12) = 5
+ *            howManyBits(298) = 10
+ *            howManyBits(-5) = 4
+ *            howManyBits(0)  = 1
+ *            howManyBits(-1) = 1
+ *            howManyBits(0x80000000) = 32
+ *  Legal ops: ! ~ & ^ | + << >>
+ *  Max ops: 90
+ *  Rating: 4
+ */
+int howManyBits(int x) {
+     /* try to find the highest bit that is 1, and for non-negative number, the extra sign bit should be counted */
+     int judge,count,special,judge_1,judge_2,tmp,result;
+     tmp=x;
+     count=0;
+     x=x^(x>>31); /* when x is nega, make x=~x */
+     /* the initial guess is to enumerate and try to shift every bit, but this solution is too silly, it might could be simplified */
+     
+     judge=!!(x>>16); /* judge whether the high 16 bits have bit=1 */
+     count=judge<<4; /* multiply by 16, the formulas below also have this similar reason*/
+     x=x>>(16&(judge<<31>>31));
+     
+     judge=!!(x>>8);
+     count=count+(judge<<3);
+     x=x>>(8&(judge<<31>>31));
+     
+     judge=!!(x>>4);
+     count=count+(judge<<2);
+     x=x>>(4&(judge<<31>>31));
+     
+     judge=!!(x>>2);
+     count=count+(judge<<1);
+     x=x>>(2&(judge<<31>>31));
+     
+     judge=!!(x>>1);
+     count=count+(judge<<0); 
+     x=x>>(1&(judge<<31>>31));
+     
+     special=0x01<<31>>31;
+     judge_1=(!(tmp^special));
+     judge_2=(!(tmp^0));
+     judge=judge_1|judge_2;
+     result=(count+2)&((!(judge_1|judge_2))<<31>>31);
+     return result+judge;  /*special: 0 and -1*/
+}
+//float
+/* 
+ * floatScale2 - Return bit-level equivalent of expression 2*f for
+ *   floating point argument f.
+ *   Both the argument and result are passed as unsigned int's, but
+ *   they are to be interpreted as the bit-level representation of
+ *   single-precision floating point values.
+ *   When argument is NaN, return argument
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+unsigned floatScale2(unsigned uf) {
+    /* in 32-bit machine, float number has one bit for sign zone, 8 bits for exp zone, 23 bits for frac zone 
+    *to implement *2, we could use <<1 */
+    unsigned int sign;
+    /* attention: for unsigned int, shifts will only be logical shifts */
+    sign=uf>>31;
+    if((!(((uf>>23)&0xff)^0xff))) 
+    /* when argument is NaN(actually also positive and negative infinity, but 2*infinity is still infinity itself), exp zone are all 1 bits */
+    return uf; 
+    
+    if((!((uf>>23)&0xff))||(!(uf|0x00))) /* when exp zone are all 0 bits */
+    return (sign<<31)+(uf<<1);  /* in this situation, E is always 1-Bias, so we couldn't *2 by simply adding 1 to exp zone */
+    
+    return uf+(0x01<<23); /* add 1 to exp zone to implement *2 */
+}
+/* 
+ * floatFloat2Int - Return bit-level equivalent of expression (int) f
+ *   for floating point argument f.
+ *   Argument is passed as unsigned int, but
+ *   it is to be interpreted as the bit-level representation of a
+ *   single-precision floating point value.
+ *   Anything out of range (including NaN and infinity) should return
+ *   0x80000000u.
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+int floatFloat2Int(unsigned uf) {
+    /* calculate the sign zone,exp zone, and the frac zone */
+    int exp,sign,frac,result;
+    unsigned int special; 
+    /* attention: for unsigned int, shifts will only be logical shifts */
+    special=0x1<<31;
+    exp=uf<<1>>24;
+    sign=uf>>31;
+    frac=uf<<9>>9;
+    if((exp&0xff)==0xff||exp>(127+30)) /* NaN and infinity and over pow(2,30) (exceed the limit of int)*/
+    return special;
+    
+    else if(!(exp|0x00))  /* exp zone are all 0 */
+    return 0; /* for numbers close to 0, result will be 0 if number is positive, and -1 if negative */
+    
+    else if(exp>127)/* below are common situations, attention for small exp*/
+        result=((frac>>23)+1)<<(exp-127);
+     
+    else if(exp==127)
+        {
+           if(!sign)
+           return 1;
+           return -1;
+        }
+        
+    
+    else if(exp<127)
+        return 0;
+        
+        if(!sign)
+        return result;
+        
+        else
+        return ~result+1;
+    
+}
+/* 
+ * floatPower2 - Return bit-level equivalent of the expression 2.0^x
+ *   (2.0 raised to the power x) for any 32-bit integer x.
+ *
+ *   The unsigned value that is returned should have the identical bit
+ *   representation as the single-precision floating-point number 2.0^x.
+ *   If the result is too small to be represented as a denorm, return
+ *   0. If too large, return +INF.
+ * 
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. Also if, while 
+ *   Max ops: 30 
+ *   Rating: 4
+ */
+int unsigned floatPower2(int x) {
+     /* compare that whether x exceeds the range of exp zone */
+     int medium;
+     /* to speed up the function, need to use a medium variable */
+     medium=x+127;
+     if(medium<=0)
+     return 0;
+     
+     else if(medium>=127+128)
+     return 0xff<<23;
+     
+     else
+     return medium<<23; 
+     
+}
